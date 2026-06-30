@@ -18,19 +18,31 @@ public final class Interpreter implements Opcodes {
         int pc = 0;
 
         while (pc < insns.length) {
-            byte opcode = insns[pc++];
+            final byte opc = insns[pc++];
 
-            if (opcode == I32_CONST) {
-                int value = ((insns[pc] & 0xFF) << 24) | ((insns[pc + 1] & 0xFF) << 16) | ((insns[pc + 2] & 0xFF) << 8) | (insns[pc + 3] & 0xFF);
+            if (opc == I32_CONST) {
+                final int value = ((insns[pc] & 0xFF) << 24) | ((insns[pc + 1] & 0xFF) << 16) | ((insns[pc + 2] & 0xFF) << 8) | (insns[pc + 3] & 0xFF);
                 pc += 4;
                 frame.getStack().push(value);
-            } else if (opcode == LOCAL_GET) {
-                int index = insns[pc++] & 0xFF;
+            } else if (opc == LOCAL_GET) {
+                final int index = insns[pc++] & 0xFF;
                 frame.getStack().push(frame.getLocals().get(index));
-            } else if (opcode == LOCAL_SET) {
-                int index = insns[pc++] & 0xFF;
+            } else if (opc == LOCAL_SET) {
+                final int index = insns[pc++] & 0xFF;
                 frame.getLocals().set(index, frame.getStack().pop());
-            } else if (opcode == RETURN) {
+            } else if (opc == I32_ADD) {
+                final int b = frame.getStack().pop();
+                final int a = frame.getStack().pop();
+                frame.getStack().push(a + b);
+            } else if (opc == I32_SUB) {
+                final int b = frame.getStack().pop();
+                final int a = frame.getStack().pop();
+                frame.getStack().push(a - b);
+            } else if (opc == I32_MUL) {
+                final int b = frame.getStack().pop();
+                final int a = frame.getStack().pop();
+                frame.getStack().push(a * b);
+            } else if (opc == RETURN) {
                 return frame.getStack().pop();
             }
         }
