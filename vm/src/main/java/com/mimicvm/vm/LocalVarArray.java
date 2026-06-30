@@ -1,18 +1,20 @@
 package com.mimicvm.vm;
 
+import com.mimicvm.shared.type.Value;
+
 public final class LocalVarArray {
 
-    private final int[] slots;
+    private final Value[] slots;
 
     public LocalVarArray(int max) {
-        this.slots = new int[max];
+        this.slots = new Value[max];
     }
 
-    public int get(int index) {
+    public Value get(int index) {
         return slots[index];
     }
 
-    public void set(int index, int value) {
+    public void set(int index, Value value) {
         slots[index] = value;
     }
 }

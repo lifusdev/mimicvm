@@ -2,6 +2,7 @@ package com.mimicvm.vm;
 
 import com.mimicvm.shared.method.VMethod;
 import com.mimicvm.shared.op.Opcodes;
+import com.mimicvm.shared.type.Value;
 
 public final class Interpreter implements Opcodes {
 
@@ -13,7 +14,7 @@ public final class Interpreter implements Opcodes {
         this.frame = new Frame(method);
     }
 
-    public int run() {
+    public Value run() {
         final byte[] insns = method.insns();
         int pc = 0;
 
@@ -23,7 +24,7 @@ public final class Interpreter implements Opcodes {
             if (opc == I32_CONST) {
                 final int value = ((insns[pc] & 0xFF) << 24) | ((insns[pc + 1] & 0xFF) << 16) | ((insns[pc + 2] & 0xFF) << 8) | (insns[pc + 3] & 0xFF);
                 pc += 4;
-                frame.getStack().push(value);
+                frame.getStack().push(Value.i32(value));
             } else if (opc == LOCAL_GET) {
                 final int index = insns[pc++] & 0xFF;
                 frame.getStack().push(frame.getLocals().get(index));
@@ -31,17 +32,17 @@ public final class Interpreter implements Opcodes {
                 final int index = insns[pc++] & 0xFF;
                 frame.getLocals().set(index, frame.getStack().pop());
             } else if (opc == I32_ADD) {
-                final int b = frame.getStack().pop();
-                final int a = frame.getStack().pop();
-                frame.getStack().push(a + b);
+                final int b = frame.getStack().pop().data();
+                final int a = frame.getStack().pop().data();
+                frame.getStack().push(Value.i32(a + b));
             } else if (opc == I32_SUB) {
-                final int b = frame.getStack().pop();
-                final int a = frame.getStack().pop();
-                frame.getStack().push(a - b);
+                final int b = frame.getStack().pop().data();
+                final int a = frame.getStack().pop().data();
+                frame.getStack().push(Value.i32(a - b));
             } else if (opc == I32_MUL) {
-                final int b = frame.getStack().pop();
-                final int a = frame.getStack().pop();
-                frame.getStack().push(a * b);
+                final int b = frame.getStack().pop().data();
+                final int a = frame.getStack().pop().data();
+                frame.getStack().push(Value.i32(a * b));
             } else if (opc == RETURN) {
                 return frame.getStack().pop();
             }

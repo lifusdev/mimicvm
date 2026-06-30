@@ -1,19 +1,21 @@
 package com.mimicvm.vm;
 
+import com.mimicvm.shared.type.Value;
+
 public final class Stack {
 
-    private final int[] elements;
+    private final Value[] elements;
     private int top = 0;
 
     public Stack(int max) {
-        this.elements = new int[max];
+        this.elements = new Value[max];
     }
 
-    public void push(int value) {
+    public void push(Value value) {
         elements[top++] = value;
     }
 
-    public int pop() {
+    public Value pop() {
         return elements[--top];
     }
 }
