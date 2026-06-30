@@ -11,4 +11,5 @@ public interface Opcodes {
     int I32_MUL = 0x12;
 
     int RETURN = 0x20;
+    int RETURN_VOID = 0x21;
 }

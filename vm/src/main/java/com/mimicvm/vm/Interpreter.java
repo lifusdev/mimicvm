@@ -3,6 +3,7 @@ package com.mimicvm.vm;
 import com.mimicvm.shared.method.VMethod;
 import com.mimicvm.shared.op.Opcodes;
 import com.mimicvm.shared.type.Value;
+import com.mimicvm.shared.utils.ByteUtils;
 
 public final class Interpreter implements Opcodes {
 
@@ -22,7 +23,7 @@ public final class Interpreter implements Opcodes {
             final byte opc = insns[pc++];
 
             if (opc == I32_CONST) {
-                final int value = ((insns[pc] & 0xFF) << 24) | ((insns[pc + 1] & 0xFF) << 16) | ((insns[pc + 2] & 0xFF) << 8) | (insns[pc + 3] & 0xFF);
+                final int value = ByteUtils.readI32(insns, pc);
                 pc += 4;
                 frame.getStack().push(Value.i32(value));
             } else if (opc == LOCAL_GET) {
@@ -45,6 +46,10 @@ public final class Interpreter implements Opcodes {
                 frame.getStack().push(Value.i32(a * b));
             } else if (opc == RETURN) {
                 return frame.getStack().pop();
+            } else if (opc == RETURN_VOID) {
+                return null;
+            } else {
+                throw new IllegalStateException("unknown opc: " + (opc & 0xFF));
             }
         }
 
