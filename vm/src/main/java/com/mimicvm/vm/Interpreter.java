@@ -58,9 +58,18 @@ public final class Interpreter implements Opcodes {
                 final VMethod callee = module.method(methodIdx);
                 callStack.push(new Frame(callee));
             } else if (opc == RETURN) {
-                return frame.getStack().pop();
+                final Value result = frame.getStack().pop();
+                callStack.pop();
+                if (callStack.isEmpty()) {
+                    return result;
+                }
+
+                callStack.peek().getStack().push(result);
             } else if (opc == RETURN_VOID) {
-                return null;
+                callStack.pop();
+                if (callStack.isEmpty()) {
+                    return null;
+                }
             } else {
                 throw new IllegalStateException("unknown opc: " + (opc & 0xFF));
             }
